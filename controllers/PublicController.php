@@ -4,23 +4,12 @@ class PublicController {
     private $homepageContent;
 
     public function __construct() {
-        $this->db = Database::getInstance()->getConnection();
-        $this->homepageContent = new HomepageContent();
+        // $this->db = Database::getInstance()->getConnection();
+        // $this->homepageContent = new HomepageContent();
     }
 
     public function home() {
-        // Load dynamic homepage content
-        $heroContent = $this->homepageContent->getBySection('hero');
-        $aboutContent = $this->homepageContent->getBySection('about');
-        $coursesContent = $this->homepageContent->getBySection('courses');
-        $eventsContent = $this->homepageContent->getBySection('events');
-        $achievementsContent = $this->homepageContent->getBySection('achievements');
-        $galleryContent = $this->homepageContent->getBySection('gallery');
-        $testimonialsContent = $this->homepageContent->getBySection('testimonials');
-        $ctaContent = $this->homepageContent->getBySection('cta');
-
-        // Render the homepage view with dynamic content
-        include 'views/public/homepage/index.php';
+        echo "Hello World";
     }
 
     // API methods for AJAX

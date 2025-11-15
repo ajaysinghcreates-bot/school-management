@@ -12,6 +12,10 @@ require_once 'core/Security.php';
 require_once 'core/Session.php';
 require_once 'core/Validator.php';
 
+// Include middleware and models
+require_once 'middleware/Auth.php';
+require_once 'models/Permission.php';
+
 // Get the requested path
 $requestUri = $_SERVER['REQUEST_URI'];
 $path = parse_url($requestUri, PHP_URL_PATH);
@@ -19,7 +23,7 @@ $path = trim($path, '/');
 
 // If path is empty, default to home
 if (empty($path)) {
-    $path = 'home';
+    $path = '';
 }
 
 // Create router instance and dispatch

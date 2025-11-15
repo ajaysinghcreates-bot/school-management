@@ -237,7 +237,7 @@ class Router {
                 }
 
                 // Check authentication and authorization
-                $this->checkAccess($route);
+                $this->checkAccess($route, $path);
 
                 // Execute controller method
                 $controller->$methodName();
@@ -249,33 +249,38 @@ class Router {
         }
     }
 
-    private function checkAccess($route) {
-        $auth = new Auth();
-
+    private function checkAccess($route, $path) {
         // Routes that don't require authentication
-        $publicRoutes = ['login', 'about', 'courses', 'events', 'gallery', 'contact', 'admission'];
+        $publicRoutes = ['', 'login', 'about', 'courses', 'events', 'gallery', 'contact', 'admission'];
+
+        $auth = null;
+        if (!in_array($path, $publicRoutes) && !strpos($path, 'api/')) {
+            $auth = new Auth();
+        }
 
         // API routes that might have different auth requirements
         $isApiRoute = strpos($route['controller'], 'api') !== false;
 
         if (!in_array($route['controller'], $publicRoutes) && !$isApiRoute) {
-            if (!$auth->can('access_system')) {
+            if (!$auth || !$auth->can('access_system')) {
                 header('Location: /login');
                 exit;
             }
         }
 
         // Role-based access control with permissions
-        if (strpos($route['controller'], 'AdminController') === 0) {
-            $auth->permissionCheck('admin.access');
-        } elseif (strpos($route['controller'], 'TeacherController') === 0) {
-            $auth->permissionCheck('teacher.access');
-        } elseif (strpos($route['controller'], 'CashierController') === 0) {
-            $auth->permissionCheck('cashier.access');
-        } elseif (strpos($route['controller'], 'StudentController') === 0) {
-            $auth->permissionCheck('student.access');
-        } elseif (strpos($route['controller'], 'ParentController') === 0) {
-            $auth->permissionCheck('parent.access');
+        if ($auth) {
+            if (strpos($route['controller'], 'AdminController') === 0) {
+                $auth->permissionCheck('admin.access');
+            } elseif (strpos($route['controller'], 'TeacherController') === 0) {
+                $auth->permissionCheck('teacher.access');
+            } elseif (strpos($route['controller'], 'CashierController') === 0) {
+                $auth->permissionCheck('cashier.access');
+            } elseif (strpos($route['controller'], 'StudentController') === 0) {
+                $auth->permissionCheck('student.access');
+            } elseif (strpos($route['controller'], 'ParentController') === 0) {
+                $auth->permissionCheck('parent.access');
+            }
         }
     }
 
